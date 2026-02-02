@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { getBranches } from './lib/db.js';
 
 dotenv.config();
 
@@ -15,9 +16,22 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend API running' });
 });
 
-// Import branch handlers
+// Get branches from database
 app.get('/api/branches', async (req, res) => {
   try {
+    const branches = await getBranches();
+    res.json({
+      data: branches && branches.length > 0 ? branches : [
+        { id: 1, name: 'Surya Painting Central', city: 'Jakarta' },
+        { id: 2, name: 'Surya Painting North', city: 'Bandung' },
+        { id: 3, name: 'Surya Painting South', city: 'Surabaya' },
+        { id: 4, name: 'Surya Painting East', city: 'Medan' },
+        { id: 5, name: 'Surya Painting West', city: 'Padang' },
+        { id: 6, name: 'Surya Painting Coast', city: 'Makassar' },
+      ]
+    });
+  } catch (err) {
+    console.error('Branch fetch error:', err.message);
     res.json({
       data: [
         { id: 1, name: 'Surya Painting Central', city: 'Jakarta' },
@@ -28,8 +42,6 @@ app.get('/api/branches', async (req, res) => {
         { id: 6, name: 'Surya Painting Coast', city: 'Makassar' },
       ]
     });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
   }
 });
 
