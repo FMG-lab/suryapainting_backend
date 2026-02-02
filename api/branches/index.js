@@ -12,18 +12,18 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       const branches = await getBranches();
-      return res.status(200).json({ branches: branches || [] });
+      return res.status(200).json({ data: branches || [] });
     }
 
     if (req.method === 'POST') {
       const { name, code } = req.body;
       if (!name) return res.status(400).json({ error: 'Name is required' });
       const branch = await createBranch(name, code);
-      return res.status(201).json({ id: branch.id, name: branch.name, code: branch.code });
+      return res.status(201).json({ data: { id: branch.id, name: branch.name, code: branch.code } });
     }
 
     res.status(405).json({ error: 'Method not allowed' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ data: [], error: error.message });
   }
 }
